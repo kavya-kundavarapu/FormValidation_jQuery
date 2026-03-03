@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jQuery Form Validation</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/bootstrap/dist/css/bootstrap.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/node_modules/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
+    <link rel="stylesheet" href="/node_modules/jquery-ui-dist/jquery-ui.css" />
+    <script src="/node_modules/jquery-ui-dist/jquery-ui.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        // 👁 Password Eye Toggle
+        $("#togglePassword").click(function () {
+          let type = $("#password").attr("type");
+
+          if (type === "password") {
+            $("#password").attr("type", "text");
+            $("#togglePassword").removeClass("bi-eye-slash").addClass("bi-eye");
+          } else {
+            $("#password").attr("type", "password");
+            $("#togglePassword").removeClass("bi-eye").addClass("bi-eye-slash");
+          }
+        });
+
+        // 👁 Confirm Password Eye Toggle
+        $("#toggleConfirmPassword").click(function () {
+          let type = $("#confirmPassword").attr("type");
+
+          if (type === "password") {
+            $("#confirmPassword").attr("type", "text");
+            $("#toggleConfirmPassword")
+              .removeClass("bi-eye-slash")
+              .addClass("bi-eye");
+          } else {
+            $("#confirmPassword").attr("type", "password");
+            $("#toggleConfirmPassword")
+              .removeClass("bi-eye")
+              .addClass("bi-eye-slash");
+          }
+        });
+
+        // 🔐 Password Validation
+        function validatePassword() {
+          let password = $("#password").val();
+          let confirmPassword = $("#confirmPassword").val();
+
+          let errorMessage = "";
+
+          if (password.length < 8) {
+            errorMessage = "Minimum 8 characters required";
+          } else if (!/[A-Z]/.test(password)) {
+            errorMessage = "At least one uppercase letter required";
+          } else if (!/[0-9]/.test(password)) {
+            errorMessage = "At least one number required";
+          }
+
+          if (errorMessage !== "") {
+            $("#confirmError").text(errorMessage);
+            $("#password").addClass("is-invalid");
+            return;
+          } else {
+            $("#password").removeClass("is-invalid");
+          }
+
+          if (confirmPassword !== "" && password !== confirmPassword) {
+            $("#confirmError").text("Passwords do not match");
+            $("#confirmPassword").addClass("is-invalid");
+          } else {
+            $("#confirmError").text("");
+            $("#confirmPassword").removeClass("is-invalid");
+          }
+        }
+
+        $("#password").on("keyup", validatePassword);
+        $("#confirmPassword").on("keyup", validatePassword);
+        // Disable submit initially
+        $("#submitBtn").prop("disabled", true);
+
+        // Enable submit only if everything correct
+        function checkFormValid() {
+          let name = $("#name").val().trim();
+          let email = $("#email").val().trim();
+          let password = $("#password").val();
+          let confirmPassword = $("#confirmPassword").val();
+
+          let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+
+          if (
+            name !== "" &&
+            emailPattern.test(email) &&
+            password.length >= 8 &&
+            /[A-Z]/.test(password) &&
+            /[0-9]/.test(password) &&
+            password === confirmPassword
+          ) {
+            $("#submitBtn").prop("disabled", false);
+          } else {
+            $("#submitBtn").prop("disabled", true);
+          }
+        }
+
+        $("#name, #email, #password, #confirmPassword").on(
+          "keyup",
+          checkFormValid,
+        );
+      });
+    </script>
+  </head>
+
+  <body
+    class="bg-light d-flex justify-content-center align-items-center vh-100"
+  >
+    <div class="card shadow p-4" style="width: 400px">
+      <h4 class="text-center mb-3">Registration Form</h4>
+
+      <form id="registerForm">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" id="name" class="form-control" />
+          <small id="nameError" class="text-danger"></small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" id="email" class="form-control" />
+          <small id="emailError" class="text-danger"></small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <div class="input-group">
+            <input type="password" id="password" class="form-control" />
+            <button
+              type="button"
+              id="togglePassword"
+              class="btn btn-outline-secondary bi bi-eye-slash"
+            ></button>
+            <small id="passwordError" class="text-danger"></small>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Confirm Password</label>
+          <div class="input-group">
+            <input type="password" id="confirmPassword" class="form-control" />
+            <button
+              type="button"
+              id="toggleConfirmPassword"
+              class="btn btn-outline-secondary bi bi-eye-slash"
+            ></button>
+          </div>
+          <small id="confirmError" class="text-danger"></small>
+        </div>
+        <dl>
+          <dt>date</dt>
+          <dd><input type="date" id="date" class="form-control" /></dd>
+        </dl>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary w-100">
+          Register
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
